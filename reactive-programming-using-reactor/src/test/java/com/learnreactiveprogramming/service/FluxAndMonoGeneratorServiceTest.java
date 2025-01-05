@@ -46,4 +46,20 @@ class FluxAndMonoGeneratorServiceTest {
                 .expectNextCount(9)
                 .verifyComplete();
     }
+
+    @Test
+    void namesFlux_concatMap_withDelay() {
+        var namesFlux_concatMap = fluxAndMonoGeneratorService.namesFlux_concatMap_withDelay();
+        StepVerifier.create(namesFlux_concatMap)
+                .expectNext("A")
+                .expectNext("L")
+                .expectNext("E")
+                .expectNext("X")
+                .expectNext("C")
+                .expectNext("H")
+                .expectNext("L")
+                .expectNext("O")
+                .expectNext("E")
+                .verifyComplete();
+    }
 }

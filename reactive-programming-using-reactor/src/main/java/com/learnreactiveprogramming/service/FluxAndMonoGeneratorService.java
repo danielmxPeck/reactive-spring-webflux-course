@@ -1,5 +1,6 @@
 package com.learnreactiveprogramming.service;
 
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -7,6 +8,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Random;
 
+@Slf4j
 public class FluxAndMonoGeneratorService {
 
     public Flux<String> namesFlux(){
@@ -14,8 +16,23 @@ public class FluxAndMonoGeneratorService {
     }
 
     public Mono<String> nameMono(){
-        return Mono.just("Adam");
+        return Mono.just("Adam").map(String::toUpperCase);
     }
+
+    public Mono <List<String>> nameMono_flatMap(){
+        return Mono.just("alex")
+                .map(String::toUpperCase)
+                .flatMap(this::splitStringMono).log();
+    }
+
+    private Mono<List<String>> splitStringMono(String s) {
+        var charArray = s.split("");
+        System.out.println("charArray: " + charArray);
+        var charList = List.of(charArray);
+        System.out.println("charList: " + charList);
+        return Mono.just(charList);
+    }
+
 
     public Flux<String> namesFluxMap(){
         //**filter string whose length > 3 **
@@ -54,6 +71,14 @@ public class FluxAndMonoGeneratorService {
                 .delayElements(Duration.ofMillis(new Random().nextInt(1000)));
     }
 
+    public  Flux<String> namesFlux_concatMap_withDelay() {
+        //return individual character of ALEX, CHLOE
+        return Flux.fromIterable(List.of("alex", "chloe")).map(String::toUpperCase)
+                .filter(name -> name.length() > 3)
+                .concatMap(this::splitString_withDelay).log();
+    }
+
+
 
         public static void main(String[] args){
         FluxAndMonoGeneratorService fluxAndMonoGeneratorService = new FluxAndMonoGeneratorService();
@@ -74,6 +99,9 @@ public class FluxAndMonoGeneratorService {
 //                System.out.println("Mono name is: " + name);
 //            }
 //        );
-            fluxAndMonoGeneratorService.namesFlux_flatMap_withDelay().subscribe(System.out::println);
+//            fluxAndMonoGeneratorService.namesFlux_flatMap_withDelay().subscribe(System.out::println);
+//            fluxAndMonoGeneratorService.namesFlux_concatMap_withDelay().subscribe(System.out::println);
+//            fluxAndMonoGeneratorService.nameMono().subscribe(System.out::println);
+            fluxAndMonoGeneratorService.nameMono_flatMap().subscribe(System.out::println);
         }
     }
