@@ -5,6 +5,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -22,12 +23,12 @@ public class FluxAndMonoGeneratorService {
     public Mono <List<String>> nameMono_flatMap(){
         return Mono.just("alex")
                 .map(String::toUpperCase)
-                .flatMap(this::splitStringMono).log();
+                .flatMap(this::splitStringMono);
     }
 
     private Mono<List<String>> splitStringMono(String s) {
         var charArray = s.split("");
-        System.out.println("charArray: " + charArray);
+        System.out.println("charArray: " + Arrays.toString(charArray));
         var charList = List.of(charArray);
         System.out.println("charList: " + charList);
         return Mono.just(charList);
@@ -35,8 +36,6 @@ public class FluxAndMonoGeneratorService {
 
 
     public Flux<String> namesFluxMap(){
-        //**filter string whose length > 3 **
-        //convert to uppercase
         return namesFlux().map(String::toUpperCase)
              //filter string whose length > 3
              .filter(name -> name.length() > 3)
@@ -46,22 +45,24 @@ public class FluxAndMonoGeneratorService {
 
 
     public  Flux<String> namesFlux_flatMap() {
-        //return individual character of ALEX, CHLOE
         return Flux.fromIterable(List.of("alex", "chloe")).map(String::toUpperCase)
                 .filter(name -> name.length() > 3)
-                .flatMap(this::splitString).log();
+                .flatMap(this::splitString);
     }
 
-    public Flux<String> splitString(String name){
-        var charArray = name.split("");
-        return Flux.fromArray(charArray);
+    public  Flux<String> namesFlux_flatMap_defaultIfEmpty() {
+        return Flux.fromIterable(List.of("alex", "chloe")).map(String::toUpperCase)
+                .filter(name -> name.length() < 3)
+                .defaultIfEmpty("default")
+                .flatMap(this::splitString);
     }
+
 
     public  Flux<String> namesFlux_flatMap_withDelay() {
         //return individual character of ALEX, CHLOE
         return Flux.fromIterable(List.of("alex", "chloe")).map(String::toUpperCase)
                 .filter(name -> name.length() > 3)
-                .flatMap(this::splitString_withDelay).log();
+                .flatMap(this::splitString_withDelay);
 
 
     }
@@ -75,33 +76,65 @@ public class FluxAndMonoGeneratorService {
         //return individual character of ALEX, CHLOE
         return Flux.fromIterable(List.of("alex", "chloe")).map(String::toUpperCase)
                 .filter(name -> name.length() > 3)
-                .concatMap(this::splitString_withDelay).log();
+                .concatMap(this::splitString_withDelay);
     }
 
+    public Flux<String> nameMono_flatMapMany(){
+        return Mono.just("alex")
+                .filter(name -> name.length() > 3)
+                .map(String::toUpperCase)
+                .flatMapMany(this::splitString).log();
+    }
 
 
         public static void main(String[] args){
         FluxAndMonoGeneratorService fluxAndMonoGeneratorService = new FluxAndMonoGeneratorService();
 
-//        fluxAndMonoGeneratorService.namesFluxMap().subscribe(System.out::println);
+        System.out.println("nameFluxMap");
+        fluxAndMonoGeneratorService.namesFluxMap().subscribe(System.out::println);
 
-//        fluxAndMonoGeneratorService.namesFlux()
-//            .subscribe(
-//                name ->
-//                {
-//                    System.out.println("Name is: " + name);
-//                }
-//            );
-//
-//        fluxAndMonoGeneratorService.nameMono().subscribe(
-//            name ->
-//            {
-//                System.out.println("Mono name is: " + name);
-//            }
-//        );
-//            fluxAndMonoGeneratorService.namesFlux_flatMap_withDelay().subscribe(System.out::println);
-//            fluxAndMonoGeneratorService.namesFlux_concatMap_withDelay().subscribe(System.out::println);
-//            fluxAndMonoGeneratorService.nameMono().subscribe(System.out::println);
+
+        System.out.println("nameFlux");
+        fluxAndMonoGeneratorService.namesFlux()
+            .subscribe(
+                name ->
+                {
+
+                    System.out.println("Name is: " + name);
+                }
+            );
+
+        System.out.println("nameMono");
+        fluxAndMonoGeneratorService.nameMono().subscribe(
+            name ->
+            {
+
+                System.out.println("Mono name is: " + name);
+            }
+        );
+
+            System.out.println("nameMono_flatMap_withDelay");
+            fluxAndMonoGeneratorService.namesFlux_flatMap_withDelay().subscribe(System.out::println);
+
+            System.out.println("nameMono_concatMap_withDelay");
+            fluxAndMonoGeneratorService.namesFlux_concatMap_withDelay().subscribe(System.out::println);
+
+            System.out.println("nameMono");
+            fluxAndMonoGeneratorService.nameMono().subscribe(System.out::println);
+
+            System.out.println("nameMono_flatMap");
             fluxAndMonoGeneratorService.nameMono_flatMap().subscribe(System.out::println);
-        }
+
+            System.out.println("nameMono_flatMapMany");
+            fluxAndMonoGeneratorService.nameMono_flatMapMany().subscribe(System.out::println);
+
+            System.out.println("namesFlux_flatMap_defaultIfEmpty");
+            fluxAndMonoGeneratorService.namesFlux_flatMap_defaultIfEmpty().subscribe(System.out::println);
     }
+
+    public Flux<String> splitString(String name){
+        var charArray = name.split("");
+        return Flux.fromArray(charArray);
+    }
+
+}

@@ -3,40 +3,40 @@ package com.learnreactiveprogramming.service;
 import org.junit.jupiter.api.Test;
 import reactor.test.StepVerifier;
 
-import static org.junit.jupiter.api.Assertions.*;
+
 
 class FluxAndMonoGeneratorServiceTest {
     FluxAndMonoGeneratorService fluxAndMonoGeneratorService = new FluxAndMonoGeneratorService();
 
-//    @Test
-//    void namesFlux(){
-//        var namesFlux = fluxAndMonoGeneratorService.namesFlux();
-//
-//        StepVerifier.create(namesFlux)
-//                .expectNext("Adam")
-//                .expectNext("Anna")
-//                .expectNext("Jack")
-//                .expectNext("Jenny")
-//                .verifyComplete();
-//    }
+    @Test
+    void namesFlux(){
+        var namesFlux = fluxAndMonoGeneratorService.namesFlux();
+
+        StepVerifier.create(namesFlux)
+                .expectNext("Adam")
+                .expectNext("Anna")
+                .expectNext("Jack")
+                .expectNext("Jenny")
+                .verifyComplete();
+    }
 
 
-//    @Test
-//    void namesFlux_flatMap() {
-//        var namesFlux_flatMap = fluxAndMonoGeneratorService.namesFlux_flatMap();
-//
-//        StepVerifier.create(namesFlux_flatMap)
-//                .expectNext("A")
-//                .expectNext("L")
-//                .expectNext("E")
-//                .expectNext("X")
-//                .expectNext("C")
-//                .expectNext("H")
-//                .expectNext("L")
-//                .expectNext("O")
-//                .expectNext("E")
-//                .verifyComplete();
-//    }
+    @Test
+    void namesFlux_flatMap() {
+        var namesFlux_flatMap = fluxAndMonoGeneratorService.namesFlux_flatMap();
+
+        StepVerifier.create(namesFlux_flatMap)
+                .expectNext("A")
+                .expectNext("L")
+                .expectNext("E")
+                .expectNext("X")
+                .expectNext("C")
+                .expectNext("H")
+                .expectNext("L")
+                .expectNext("O")
+                .expectNext("E")
+                .verifyComplete();
+    }
 
     @Test
     void namesFlux_flatMap_withDelay() {
@@ -60,6 +60,17 @@ class FluxAndMonoGeneratorServiceTest {
                 .expectNext("L")
                 .expectNext("O")
                 .expectNext("E")
+                .verifyComplete();
+    }
+
+    @Test
+    void nameMono_flatMapMany() {
+        var nameMono_flatMapMany = fluxAndMonoGeneratorService.nameMono_flatMapMany();
+        StepVerifier.create(nameMono_flatMapMany)
+                .expectNext("A")
+                .expectNext("L")
+                .expectNext("E")
+                .expectNext("X")
                 .verifyComplete();
     }
 }
