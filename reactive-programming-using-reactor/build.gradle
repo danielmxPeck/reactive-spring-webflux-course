@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id "io.freefair.lombok" version "5.3.0"
-
+    id "com.diffplug.spotless" version "6.8.0"
 }
 
 group 'com.learnreaactiveprogramming'
@@ -31,4 +31,19 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+spotless {
+    java {
+        target '**/*.java'  // This will apply Spotless to all Java files in the project
+
+        // Use google-java-format as the formatter (you can choose others like eclipse, or clang-format)
+        googleJavaFormat()
+
+        // Optional: set your desired version of google-java-format if necessary
+        // googleJavaFormat('1.7')  // Specify a particular version if needed
+
+        // Optional: you can configure other format options (like import order, etc.)
+        // importOrder 'java', 'javax', 'org', 'com'
+    }
 }
